@@ -4,8 +4,7 @@ from pathlib import Path
 
 import pytest
 
-import LexData
-
+from LexData import * as LexData
 
 @pytest.fixture
 def credentials():
