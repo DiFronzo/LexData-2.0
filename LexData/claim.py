@@ -96,7 +96,7 @@ class Claim(dict):
 
         * wikibase-entity: the id as string, including 'L/Q/P'-prefix
         * string: the string
-        * manolingualtext: the text as string
+        * monolingualtext: the text as string
         * quantity: the amount as float
         * time: the timestamp as string in format ISO 8601
         * globecoordinate: tuple of latitude and longitude as floats

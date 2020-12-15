@@ -184,7 +184,7 @@ class Lexeme(Entity):
         return "<Lexeme '{}'>".format(self.id)
 
     def update_from_json(self, data: str, overwrite=False):
-        """Update the lexeme from an json-string.
+        """Update the lexeme from a json-string.
 
         This is a lower level function usable to save arbitrary modifications
         on a lexeme. The data has to be supplied in the right format by the

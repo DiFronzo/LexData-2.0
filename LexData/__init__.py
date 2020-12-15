@@ -3,11 +3,11 @@ import json
 import logging
 from typing import List
 
-from .claim import Claim
-from .form import Form
+# from .claim import Claim
+# from .form import Form
+# from .sense import Sense
 from .language import Language
 from .lexeme import Lexeme
-from .sense import Sense
 from .wikidatasession import WikidataSession
 
 

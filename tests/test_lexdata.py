@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 from datetime import datetime
 from pathlib import Path
+import os
 
 import pytest
 
-from LexData import * as LexData
+import LexData
+
 
 @pytest.fixture
 def credentials():
-    with open(Path.home() / ".wikipass") as f:
-        userename, password, *_ = f.read().split("\n")
-    return (userename, password)
+    try:
+        username = "username=" + os.environ['LEXDATA_USERNAME']
+        password = "password=" + os.environ['LEXDATA_PASSWORD']
+        return (username, password)
+    except KeyError:
+        with open(Path.home() / ".wikipass") as f:
+            userename, password, *_ = f.read().split("\n")
+        return (userename, password)
 
 
 @pytest.fixture
@@ -23,6 +30,14 @@ def repo(credentials):
 def repoTestWikidata():
     test = LexData.WikidataSession()
     test.URL = "https://test.wikidata.org/w/api.php"
+    test.CSRF_TOKEN = "+\\"
+    return test
+
+
+@pytest.fixture
+def repoWikidata():
+    test = LexData.WikidataSession()
+    test.URL = "https://wikidata.org/w/api.php"
     test.CSRF_TOKEN = "+\\"
     return test
 
@@ -99,11 +114,11 @@ def test_writes(repoTestWikidata):
 
 
 def test_search(repo):
-    results = LexData.search_lexemes(repo, "first", LexData.language.en, "Q1084")
+    results = LexData.search_lexemes(repo, "first", LexData.language._en, "Q1084")
     assert len(results) == 1
     assert results[0].get("id") == "L2"
 
-    result = LexData.get_or_create_lexeme(repo, "first", LexData.language.en, "Q1084")
+    result = LexData.get_or_create_lexeme(repo, "first", LexData.language._en, "Q1084")
     assert result["id"] == "L2"
 
 
@@ -125,4 +140,4 @@ def test_detatchedClaim(repo):
 
 
 def test_createLexeme(repoTestWikidata):
-    LexData.create_lexeme(repoTestWikidata, "foobar", LexData.language.en, "Q100")
+    LexData.create_lexeme(repoTestWikidata, "foobar", LexData.language._en, "Q100")
