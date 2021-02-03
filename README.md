@@ -3,6 +3,7 @@
   <a href="https://github.com/Nudin/LexData/blob/master/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <a href="https://pepy.tech/project/LexData"><img alt="Downloads" src="https://pepy.tech/badge/LexData"></a>
   <a href="https://pypi.org/project/LexData/"><img alt="PyPI" src="https://img.shields.io/pypi/v/LexData"></a>
+  <a href="https://github.com/DiFronzo/LexData/workflows/pytest-main/"><img alt="Github_workflow" src="https://github.com/DiFronzo/LexData/workflows/pytest-main/badge.svg"></a>
 </p>
 
 This is a small library to create bots, scripts and tools about Wikidata
