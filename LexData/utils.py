@@ -7,22 +7,22 @@ from .wikidatasession import WikidataSession
 
 
 @functools.lru_cache()
-def getPropertyType(propertyId: str):
+def get_property_type(property_id: str):
     repo = WikidataSession()
     query = {
         "action": "query",
         "format": "json",
         "prop": "revisions",
-        "titles": "Property:" + propertyId,
+        "titles": "Property:" + property_id,
         "rvprop": "content",
     }
     DATA = repo.get(query)
-    jsonstr = list(DATA["query"]["pages"].values())[0]["revisions"][0]["*"]
-    content = json.loads(jsonstr)
+    json_str = list(DATA["query"]["pages"].values())[0]["revisions"][0]["*"]
+    content = json.loads(json_str)
     return content["datatype"]
 
 
-def buildDataValue(datatype: str, value):
+def build_data_value(datatype: str, value):
     if datatype in [
         "wikibase-lexeme",
         "wikibase-form",
@@ -74,11 +74,11 @@ def buildDataValue(datatype: str, value):
         if type(value) == dict:
             return {"value": value, "type": "quantity"}
         if type(value) in [int, float]:
-            valueObj = {
+            value_obj = {
                 "amount": "%+f" % value,
                 "unit": "1",
             }
-            return {"value": valueObj, "type": "time"}
+            return {"value": value_obj, "type": "time"}
         else:
             raise TypeError(
                 f"Can not convert type {type(value)} to datatype {datatype}"
@@ -87,16 +87,16 @@ def buildDataValue(datatype: str, value):
         if type(value) == dict:
             return {"value": value, "type": "time"}
         if type(value) == datetime:
-            cleanedDateTime = value.replace(hour=0, minute=0, second=0, microsecond=0)
-            valueObj: Dict[str, Any] = {
-                "time": "+" + cleanedDateTime.isoformat() + "Z",
+            cleaned_date_time = value.replace(hour=0, minute=0, second=0, microsecond=0)
+            value_obj: Dict[str, Any] = {
+                "time": "+" + cleaned_date_time.isoformat() + "Z",
                 "timezone": 0,
                 "before": 0,
                 "after": 0,
                 "precision": 11,
                 "calendarmodel": "http://www.wikidata.org/entity/Q1985727",
             }
-            return {"value": valueObj, "type": "time"}
+            return {"value": value_obj, "type": "time"}
         else:
             raise TypeError(
                 f"Can not convert type {type(value)} to datatype {datatype}"
@@ -105,12 +105,13 @@ def buildDataValue(datatype: str, value):
         raise NotImplementedError(f"Datatype {datatype} not implemented")
 
 
-def buildSnak(propertyId: str, value):
-    datatype = getPropertyType(propertyId)
-    datavalue = buildDataValue(datatype, value)
+def build_snak(property_id: str, value):
+    data_type = get_property_type(property_id)
+    data_value = build_data_value(data_type, value)
+
     return {
         "snaktype": "value",
-        "property": propertyId,
-        "datavalue": datavalue,
-        "datatype": datatype,
+        "property": property_id,
+        "datavalue": data_value,
+        "datatype": data_type,
     }

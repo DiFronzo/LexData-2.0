@@ -6,21 +6,22 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="LexData",
     version="0.2.0",
-    author="Michael F. Schoenitzer",
+    author="Michael F. Schoenitzer & DiFronzo",
     author_email="michael@schoenitzer.de",
     description="A tiny package for editing Lexemes on Wikidata",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Nudin/LexData",
+    url="https://github.com/DiFronzo/LexData",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "requests>=2.22.0",
+        "requests>=2.27.0",
     ],
 )

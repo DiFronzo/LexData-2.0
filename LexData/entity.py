@@ -23,12 +23,12 @@ class Entity(dict):
 
         :rtype: Dict[str, List[Claim]]
         """
-        if self.get("claims", {}) != []:
+        if self.get("claims", {}):
             return {k: [Claim(c) for c in v] for k, v in self.get("claims", {}).items()}
         else:
             return {}
 
-    def addClaims(self, claims: Union[List[Claim], Dict[str, List[str]]]):
+    def add_claims(self, claims: Union[List[Claim], Dict[str, List[str]]]):
         """
         Add claims to the entity.
 
@@ -38,7 +38,7 @@ class Entity(dict):
 
                        - A list of Objects of type Claim
 
-                         Example: ``[Claim(propertyId="P31", value="Q1")]``
+                         Example: ``[Claim(property_id="P31", value="Q1")]``
 
                        - A dictionary with the property id as key and lists of
                          string formated entity ids as values.
@@ -49,13 +49,13 @@ class Entity(dict):
                        currently only supports datatypes of kind Entity.
         """
         if isinstance(claims, list):
-            self.__setClaims__(claims)
+            self.__set_claims__(claims)
         elif isinstance(claims, dict):
-            self.__createClaims__(claims)
+            self.__create_claims__(claims)
         else:
             raise TypeError("Invalid argument type:", type(claims))
 
-    def __setClaims__(self, claims: List[Claim]):
+    def __set_claims__(self, claims: List[Claim]):
         """
         Add prebuild claims to the entity
 
@@ -63,9 +63,9 @@ class Entity(dict):
         """
         for claim in claims:
             pid = claim.property
-            self.__setClaim__(pid, claim)
+            self.__set_claim__(str(pid), claim)
 
-    def __createClaims__(self, claims: Dict[str, List[str]]):
+    def __create_claims__(self, claims: Dict[str, List[str]]):
         """
         Create and add new claims to the entity.
 
@@ -76,51 +76,51 @@ class Entity(dict):
         """
         for cle, values in claims.items():
             for value in values:
-                self.__setEntityClaim__(cle, value)
+                self.__set_entity_claim__(cle, value)
 
-    def __setEntityClaim__(self, idProp: str, idStr: str):
+    def __set_entity_claim__(self, id_prop: str, id_str: str):
         """
         Add a claim of an entity-type to the entity.
 
         Supported types are Lexeme, Form, Sense, Item, Property.
 
-        :param idProp: id of the property (example: "P31")
+        :param id_prop: id of the property (example: "P31")
         :param idItem: id of the entity (example: "Q1")
         """
-        entityId = int(idStr[1:])
-        claim_value = json.dumps({"entity-type": "item", "numeric-id": entityId})
-        self.__setClaim__(idProp, claim_value)
+        entity_id = int(id_str[1:])
+        claim_value = json.dumps({"entity-type": "item", "numeric-id": entity_id})
+        self.__set_claim__(id_prop, claim_value)
 
-    def __setClaim__(self, idProp: str, claim_value):
+    def __set_claim__(self, id_prop: str, claim_value):
         PARAMS = {
             "action": "wbcreateclaim",
             "format": "json",
             "entity": self.id,
             "snaktype": "value",
             "bot": "1",
-            "property": idProp,
+            "property": id_prop,
             "value": claim_value,
             "token": "__AUTO__",
         }
 
         DATA = self.repo.post(PARAMS)
         assert "claim" in DATA
-        addedclaim = DATA["claim"]
+        added_claim = DATA["claim"]
         logging.info("Claim added")
 
         # Add the created claim to the local entity instance
-        if self.get("claims", []) == []:
-            self["claims"] = {idProp: addedclaim}
-        elif idProp in self.claims:
-            self.claims[idProp].append(addedclaim)
+        if not self.get("claims", []):
+            self["claims"] = {id_prop: added_claim}
+        elif id_prop in self.claims:
+            self.claims[id_prop].append(added_claim)
         else:
-            self.claims[idProp] = [addedclaim]
+            self.claims[id_prop] = [added_claim]
 
     @property
     def id(self) -> str:
-        EntityId = self.get("id")
-        assert isinstance(EntityId, str)
-        return EntityId
+        entity_id = self.get("id")
+        assert isinstance(entity_id, str)
+        return entity_id
 
     def __str__(self) -> str:
         return super().__repr__()

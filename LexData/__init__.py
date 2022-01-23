@@ -141,6 +141,6 @@ def create_lexeme(
     lexeme = Lexeme(repo, idLex)
 
     if claims:
-        lexeme.createClaims(claims)
+        lexeme.create_claims(claims)
 
     return lexeme

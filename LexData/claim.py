@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Tuple, Union
 
-from .utils import buildSnak
+from .utils import build_snak
 
 
 class Claim(dict):
@@ -9,10 +9,10 @@ class Claim(dict):
     There are two types of Claim objects:
 
     * Claims that where received from an existing entity.
-    * Claims that where created by the user by Claim(propertyId, value) and
+    * Claims that where created by the user by Claim(property_id, value) and
       have not yet been uploaded to Wikidata. These are called 'Detached Claims',
       since they don't belong to any entity.  They don't have an id nor an hash.
-      They can be added to an entity by the function Entity.addClaims().
+      They can be added to an entity by the function Entity.add_claims().
 
     Currently modifications on both types of claims can't be uploaded, except
     by use of the low level API call Lexeme.update_from_json().
@@ -24,20 +24,20 @@ class Claim(dict):
     def __init__(
         self,
         claim: Optional[Dict[str, Any]] = None,
-        propertyId: Optional[str] = None,
+        property_id: Optional[str] = None,
         value: Optional[Any] = None,
     ):
         super().__init__()
-        if isinstance(claim, dict) and not propertyId and not value:
+        if isinstance(claim, dict) and not property_id and not value:
             self.update(claim)
-        elif claim is None and propertyId and value:
-            self["mainsnak"] = buildSnak(propertyId, value)
+        elif claim is None and property_id and value:
+            self["mainsnak"] = build_snak(property_id, value)
             self["rank"] = "normal"
         else:
             raise TypeError(
                 "Claim() received an invalid combination of arguments expected one of:"
                 + " * (dict claimObject)"
-                + " * (str propertyId, value)"
+                + " * (str property_id, value)"
             )
 
     @property_decorator
@@ -117,7 +117,7 @@ class Claim(dict):
         if vtype == "time":
             return value["time"]
         if vtype == "globecoordinate":
-            return (float(value["latitude"]), float(value["longitude"]))
+            return float(value["latitude"]), float(value["longitude"])
         raise NotImplementedError
 
     def __repr__(self) -> str:

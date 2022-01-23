@@ -11,13 +11,13 @@ import LexData
 @pytest.fixture
 def credentials():
     try:
-        username = "username=" + os.environ['LEXDATA_USERNAME']
-        password = "password=" + os.environ['LEXDATA_PASSWORD']
-        return (username, password)
+        username = os.environ['LEXDATA_USERNAME']
+        password = os.environ['LEXDATA_PASSWORD']
+        return username, password
     except KeyError:
         with open(Path.home() / ".wikipass") as f:
-            userename, password, *_ = f.read().split("\n")
-        return (userename, password)
+            username, password, *_ = f.read().split("\n")
+        return username, password
 
 
 @pytest.fixture
@@ -103,41 +103,41 @@ def test_form(repo):
 def test_writes(repoTestWikidata):
     L123 = LexData.Lexeme(repoTestWikidata, "L123")
 
-    L123.createClaims({"P7": ["Q100"]})
-    L123.addClaims({"P7": ["Q100"]})
+    L123.create_claims({"P7": ["Q100"]})
+    L123.add_claims({"P7": ["Q100"]})
 
-    L123.createForm("test", ["Q100"])
+    L123.create_form("test", ["Q100"])
 
-    L123.createSense({"de": "testtest", "en": "testtest"})
-    L123.createSense({"de": "more tests", "en": "more tests"}, claims={})
-    L123.createSense({"en": "even more tests"}, claims={"P7": ["Q100"]})
+    L123.create_sense({"de": "testtest", "en": "testtest"})
+    L123.create_sense({"de": "more tests", "en": "more tests"}, claims={})
+    L123.create_sense({"en": "even more tests"}, claims={"P7": ["Q100"]})
 
 
 def test_search(repo):
-    results = LexData.search_lexemes(repo, "first", LexData.language._en, "Q1084")
+    results = LexData.search_lexemes(repo, "water", LexData.language.lang_en, "Q1084")
     assert len(results) == 1
-    assert results[0].get("id") == "L2"
+    assert results[0].get("id") == "L3302"
 
-    result = LexData.get_or_create_lexeme(repo, "first", LexData.language._en, "Q1084")
-    assert result["id"] == "L2"
+    result = LexData.get_or_create_lexeme(repo, "water", LexData.language.lang_en, "Q1084")
+    assert result["id"] == "L3302"
 
 
 def test_detatchedClaim(repo):
-    LexData.Claim(propertyId="P369", value="Q1")
-    LexData.Claim(propertyId="P856", value="http://example.com/")
-    LexData.Claim(propertyId="P2534", value="\frac{1}{2}")
-    quantity = LexData.Claim(propertyId="P2021", value=6)
+    LexData.Claim(property_id="P369", value="Q1")
+    LexData.Claim(property_id="P856", value="http://example.com/")
+    LexData.Claim(property_id="P2534", value="\frac{1}{2}")
+    quantity = LexData.Claim(property_id="P2021", value=6)
     assert quantity.pure_value == 6
-    date = LexData.Claim(propertyId="P580", value=datetime.now())
+    date = LexData.Claim(property_id="P580", value=datetime.now())
     assert type(date.pure_value) is str
     with pytest.raises(TypeError):
-        LexData.Claim(propertyId="P856", value=1)
-        LexData.Claim(propertyId="P2021", value="foo")
-        LexData.Claim(propertyId="P580", value=1)
-        LexData.Claim(propertyId="P580", value="foo")
+        LexData.Claim(property_id="P856", value=1)
+        LexData.Claim(property_id="P2021", value="foo")
+        LexData.Claim(property_id="P580", value=1)
+        LexData.Claim(property_id="P580", value="foo")
     with pytest.raises(Exception):
-        LexData.Claim(propertyId="P0", value="foo")
+        LexData.Claim(property_id="P0", value="foo")
 
 
 def test_createLexeme(repoTestWikidata):
-    LexData.create_lexeme(repoTestWikidata, "foobar", LexData.language._en, "Q100")
+    LexData.create_lexeme(repoTestWikidata, "foobar", LexData.language.lang_en, "Q100")
